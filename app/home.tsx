@@ -1,15 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { Card, Title, TextInput, Avatar, IconButton, Text, Button, DataTable, List } from "react-native-paper";
+import {
+  Card,
+  Title,
+  TextInput,
+  Avatar,
+  IconButton,
+  Text,
+  Button,
+  DataTable,
+  List,
+  ProgressBar,
+} from "react-native-paper";
 import { Pedometer } from "expo-sensors";
 import { useNavigation } from "expo-router";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function Home() {
   const navigation = useNavigation();
+  console.log("hello");
 
   useEffect(() => {
     navigation.setOptions({ headerShown: false });
   }, [navigation]);
+
+  useEffect(() => {
+    subscribe();
+  }, []);
 
   const [isPedometerAvailable, setIsPedometerAvailable] = useState("checking");
   const [pastStepCount, setPastStepCount] = useState(0);
@@ -23,7 +40,7 @@ export default function Home() {
     if (isAvailable) {
       const end = new Date();
       const start = new Date();
-      start.setDate(end.getDate() - 1);
+      start.setHours(0, 0, 0, 0); // set the start time to the start of the current day
 
       const pastStepCountResult = await Pedometer.getStepCountAsync(start, end);
       if (pastStepCountResult) {
@@ -40,7 +57,7 @@ export default function Home() {
             title={
               <View style={styles.titleCard}>
                 <Text variant="headlineMedium">Today:</Text>
-                <Text variant="headlineLarge">{pastStepCount} Steps</Text>
+                <Text variant="headlineLarge">{pastStepCount.toLocaleString()} Steps</Text>
               </View>
             }
           />
@@ -59,6 +76,7 @@ export default function Home() {
               <Text variant="headlineMedium">Water:</Text>
               <Text variant="headlineLarge">{waterIntake} cups</Text>
             </View>
+            <ProgressBar progress={2 / 8} color={"green"} />
             <DataTable>
               <DataTable.Header>
                 <DataTable.Title>Category</DataTable.Title>
@@ -87,7 +105,7 @@ export default function Home() {
             </DataTable>
             <Text>(healthdirect.gov.au)</Text>
           </Card.Content>
-          <Card.Actions>
+          {/* <Card.Actions>
             <IconButton
               icon="minus"
               iconColor={"purple"}
@@ -102,9 +120,17 @@ export default function Home() {
               mode="outlined"
               onPress={() => setWaterIntake(waterIntake + 1)}
             />
-          </Card.Actions>
+          </Card.Actions> */}
         </Card>
-        <View></View>
+        <Card mode="contained" style={styles.card}>
+          <Card.Content>
+            <View style={styles.titleCard}>
+              <Text variant="headlineMedium">Mood:</Text>
+              <Text variant="headlineLarge">{mood}</Text>
+            </View>
+            <Text>Your current mood is {mood}. Remember, it's okay to have bad days. Take care of yourself!</Text>
+          </Card.Content>
+        </Card>
       </View>
     </ScrollView>
   );

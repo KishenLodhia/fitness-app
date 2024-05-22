@@ -1,8 +1,8 @@
-// Mood.tsx
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
-import { Text, Chip, TextInput, Button, Surface, Card, Dialog, Portal, FAB, useTheme } from "react-native-paper";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { View, StyleSheet, ScrollView } from "react-native";
+import { Text, Card, useTheme, Badge } from "react-native-paper";
+import axios from "axios";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 interface MoodEntry {
   id: string;
@@ -12,148 +12,96 @@ interface MoodEntry {
 }
 
 const Mood: React.FC = () => {
-  const [selectedMood, setSelectedMood] = useState<string | null>(null);
-  const [notes, setNotes] = useState<string>("");
   const [moodEntries, setMoodEntries] = useState<MoodEntry[]>([]);
-  const [isDialogVisible, setDialogVisible] = useState<boolean>(false);
-
   const { colors } = useTheme();
-
-  const moods = [
-    { name: "Happy", color: colors.primary },
-    { name: "Sad", color: colors.primary },
-    { name: "Angry", color: colors.primary },
-    { name: "Excited", color: colors.primary },
-    { name: "Anxious", color: colors.primary },
-    { name: "Calm", color: colors.primary },
-  ];
 
   useEffect(() => {
     const loadMoods = async () => {
-      const storedMoods = await AsyncStorage.getItem("moodEntries");
-      if (storedMoods) {
-        setMoodEntries(JSON.parse(storedMoods));
+      try {
+        const user_id = "10"; // replace with your user id
+        const email = "k@gmail.com";
+        const token =
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoiazRAZ21haWwuY29tIiwiZXhwIjoxNzE2NTYxMDcwLCJpYXQiOjE3MTU5NTYyNzB9.zUF_VQmGsrQdU6iE1ZO_OlS4zcaFl0uzMishTTxvNV8";
+
+        const response = await axios.get(`http://${process.env.EXPO_PUBLIC_IP_ADDRESS}:3000/users/${user_id}/moods`, {
+          params: { email: email },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const moods = response.data;
+        setMoodEntries(moods);
+      } catch (error: any) {
+        console.error("Failed to load moods", error);
+        console.log("Error response:", error.response);
       }
     };
 
     loadMoods();
   }, []);
 
-  const handleMoodSelect = (mood: string) => {
-    setSelectedMood(mood);
-  };
-
-  const handleSaveMood = async () => {
-    if (selectedMood) {
-      const newEntry: MoodEntry = {
-        id: Math.random().toString(), // Unique ID for each entry
-        mood: selectedMood,
-        notes: notes,
-        timestamp: new Date().toLocaleString(),
-      };
-      const updatedMoods = [newEntry, ...moodEntries];
-      setMoodEntries(updatedMoods);
-      await AsyncStorage.setItem("moodEntries", JSON.stringify(updatedMoods));
-      // Clear selections after saving
-      setSelectedMood(null);
-      setNotes("");
-      setDialogVisible(false);
-    }
-  };
-
   const renderMoodItem = ({ item }: { item: MoodEntry }) => {
     return (
-      <Card style={styles.card}>
-        <Card.Title title={item.mood} subtitle={item.timestamp} />
+      <Card mode="contained" style={styles.card}>
+        <Card.Title title={`Mood - ${new Date(item.timestamp).toLocaleDateString()}`} />
         <Card.Content>
-          <Text>{item.notes}</Text>
+          <Text style={styles.moodText}>{`Mood: ${item.mood}`}</Text>
+          <Text style={styles.notesText}>{`Notes: ${item.notes || "No notes"}`}</Text>
         </Card.Content>
       </Card>
     );
   };
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={moodEntries}
-        renderItem={renderMoodItem}
-        keyExtractor={(item) => item.id}
-        ListHeaderComponent={<Text style={styles.header}>Previously Logged Moods</Text>}
-      />
-      <Portal>
-        <Dialog visible={isDialogVisible} onDismiss={() => setDialogVisible(false)}>
-          <Dialog.Title>Log Your Mood</Dialog.Title>
-          <Dialog.Content>
-            <Text style={styles.subtitle}>How are you feeling today?</Text>
-            <View style={styles.chipsContainer}>
-              {moods.map((mood) => (
-                <Chip
-                  key={mood.name}
-                  selected={selectedMood === mood.name}
-                  onPress={() => handleMoodSelect(mood.name)}
-                  style={[styles.chip, selectedMood === mood.name && { backgroundColor: mood.color }]}
-                >
-                  {mood.name}
-                </Chip>
-              ))}
-            </View>
-            <TextInput
-              label="Notes"
-              value={notes}
-              onChangeText={setNotes}
-              mode="outlined"
-              multiline
-              style={styles.notesInput}
-              placeholder="Add any additional information..."
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={styles.container}>
+        {moodEntries.map((data) => (
+          <Card key={data.id} mode="contained" style={styles.card}>
+            <Card.Title
+              title={`Mood - ${new Date(data.timestamp).toLocaleDateString()}`}
+              titleStyle={styles.cardTitle}
+              right={() => (
+                <Badge style={{ alignSelf: "center" }}>{new Date(data.timestamp).toLocaleTimeString()}</Badge>
+              )}
             />
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setDialogVisible(false)}>Cancel</Button>
-            <Button mode="contained" onPress={handleSaveMood}>
-              Save
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
-      <FAB style={styles.fab} icon="plus" onPress={() => setDialogVisible(true)} label="Log Mood" />
-    </View>
+
+            <Card.Content>
+              <Text style={styles.moodText}>{`Mood: ${data.mood}`}</Text>
+              <Text style={styles.notesText}>{`Notes: ${data.notes || "No notes"}`}</Text>
+            </Card.Content>
+          </Card>
+        ))}
+      </ScrollView>
+    </GestureHandlerRootView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 16,
-  },
-  header: {
-    fontSize: 24,
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 16,
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  chipsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    marginBottom: 16,
-  },
-  chip: {
-    margin: 4,
-  },
-  notesInput: {
-    marginBottom: 16,
+    padding: 20,
+    width: "100%",
   },
   card: {
-    marginBottom: 16,
+    marginBottom: 20,
+    padding: 15,
+
+    borderRadius: 10,
   },
-  fab: {
-    position: "absolute",
-    right: 16,
-    bottom: 16,
+  cardTitle: {
+    fontFamily: "customFont",
+    fontSize: 18,
+    color: "#333",
+  },
+  moodText: {
+    fontFamily: "customFont",
+    fontSize: 16,
+    marginBottom: 10,
+    color: "#555",
+  },
+  notesText: {
+    fontFamily: "customFont",
+    fontSize: 14,
+    color: "#777",
   },
 });
 
