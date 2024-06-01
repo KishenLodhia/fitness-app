@@ -3,6 +3,7 @@ import { SessionProvider } from "./ctx";
 import { PaperProvider, MD3LightTheme as DefaultTheme } from "react-native-paper";
 
 import * as React from "react";
+import { ToastProvider } from "react-native-toast-notifications";
 
 const theme = {
   ...DefaultTheme,
@@ -55,9 +56,11 @@ export default function Root() {
   // Set up the auth context and render our layout inside of it.
   return (
     <PaperProvider theme={theme}>
-      <SessionProvider>
-        <Slot />
-      </SessionProvider>
+      <ToastProvider placement="top">
+        <SessionProvider>
+          <Slot />
+        </SessionProvider>
+      </ToastProvider>
     </PaperProvider>
   );
 }

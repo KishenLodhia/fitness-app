@@ -4,6 +4,7 @@ import { Text, Card, useTheme, Badge, FAB, Portal, Modal, TextInput, Button, Chi
 import axios from "axios";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSession } from "../ctx";
+import { useToast } from "react-native-toast-notifications";
 
 interface MoodEntry {
   id: string;
@@ -21,6 +22,7 @@ const Mood: React.FC = () => {
   const [editEntryId, setEditEntryId] = useState("");
   const { colors } = useTheme();
   const { user, isLoading } = useSession();
+  const toast = useToast();
 
   useEffect(() => {
     fetchMoods();
@@ -65,11 +67,13 @@ const Mood: React.FC = () => {
         setModalVisible(false);
         setNewMood("");
         setSelectedMood("");
+        toast.show("Mood added successfully", { type: "success" });
       } else {
         throw new Error("Failed to add mood");
       }
     } catch (error) {
       console.error("Error adding mood:", error);
+      toast.show("Failed to add mood", { type: "danger" });
     }
   };
 
@@ -95,11 +99,13 @@ const Mood: React.FC = () => {
         setSelectedMood("");
         setEditMode(false);
         setEditEntryId("");
+        toast.show("Mood edited successfully", { type: "success" });
       } else {
         throw new Error("Failed to edit mood");
       }
     } catch (error) {
       console.error("Error editing mood:", error);
+      toast.show("Failed to edit mood", { type: "danger" });
     }
   };
 
@@ -116,11 +122,13 @@ const Mood: React.FC = () => {
 
       if (response.status === 200) {
         fetchMoods();
+        toast.show("Mood deleted successfully", { type: "success" });
       } else {
         throw new Error("Failed to delete mood");
       }
     } catch (error) {
       console.error("Error deleting mood:", error);
+      toast.show("Failed to delete mood", { type: "danger" });
     }
   };
 

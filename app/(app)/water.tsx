@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, StyleSheet, ScrollView, Alert } from "react-native";
 import { Card, Text, Button, FAB, Portal, Modal } from "react-native-paper";
 import axios, { AxiosError } from "axios";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSession } from "../ctx";
+import { ToastProvider, useToast } from "react-native-toast-notifications";
 
 type WaterIntakeData = {
   id: number;
@@ -18,6 +19,7 @@ const WaterIntakeTracker = () => {
   const [newAmount, setNewAmount] = useState(0);
   const [editMode, setEditMode] = useState(false);
   const [editEntryId, setEditEntryId] = useState<number | null>(null);
+  const toast = useToast();
   const { user, isLoading } = useSession();
 
   useEffect(() => {
@@ -42,14 +44,12 @@ const WaterIntakeTracker = () => {
         throw new Error("Failed to fetch water intake data");
       }
     } catch (error) {
-      console.error("Error fetching water intake data:", error);
+      handleError("Error fetching water intake data", error);
     }
   };
 
   const addWaterIntake = async () => {
     try {
-      console.log(newAmount);
-      console.log(new Date().toISOString());
       const response = await axios.post(
         `http://${process.env.EXPO_PUBLIC_IP_ADDRESS}:3000/users/${user?.id}/water_intake`,
         {
@@ -67,22 +67,12 @@ const WaterIntakeTracker = () => {
         fetchWaterIntake();
         setModalVisible(false);
         setNewAmount(0);
+        showToast("Water intake added successfully");
       } else {
         throw new Error("Failed to add water intake");
       }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        const axiosError = error as AxiosError;
-        if (axiosError.response) {
-          console.error("Error data:", axiosError.response.data);
-          console.error("Error status:", axiosError.response.status);
-          console.error("Error headers:", axiosError.response.headers);
-        } else if (axiosError.request) {
-          console.error("No response received:", axiosError.request);
-        } else {
-          console.error("Error", axiosError.message);
-        }
-      }
+    } catch (error) {
+      handleError("Error adding water intake", error);
     }
   };
 
@@ -107,11 +97,12 @@ const WaterIntakeTracker = () => {
         setNewAmount(0);
         setEditMode(false);
         setEditEntryId(null);
+        showToast("Water intake edited successfully");
       } else {
         throw new Error("Failed to edit water intake");
       }
     } catch (error) {
-      console.error("Error editing water intake:", error);
+      handleError("Error editing water intake", error);
     }
   };
 
@@ -128,11 +119,12 @@ const WaterIntakeTracker = () => {
 
       if (response.status === 200) {
         fetchWaterIntake();
+        showToast("Water intake deleted successfully");
       } else {
         throw new Error("Failed to delete water intake");
       }
     } catch (error) {
-      console.error("Error deleting water intake:", error);
+      handleError("Error deleting water intake", error);
     }
   };
 
@@ -177,6 +169,28 @@ const WaterIntakeTracker = () => {
     setEditMode(false);
     setNewAmount(0);
     setEditEntryId(null);
+  };
+
+  const handleError = (message: string, error: unknown) => {
+    let errorMessage = message;
+    if (error instanceof AxiosError) {
+      if (error.response) {
+        errorMessage += `: ${error.response.data.message}`;
+      } else if (error.request) {
+        errorMessage += ": No response received";
+      } else {
+        errorMessage += `: ${error.message}`;
+      }
+    }
+    Alert.alert("Error", errorMessage);
+  };
+
+  const showToast = (message: string) => {
+    toast.show(message, {
+      type: "success",
+      duration: 3000,
+      placement: "top",
+    });
   };
 
   return (
