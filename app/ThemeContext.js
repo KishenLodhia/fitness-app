@@ -27,9 +27,10 @@ const ThemeProvider = ({ children }) => {
   }, []);
 
   const toggleTheme = async () => {
-    setIsDarkTheme(!isDarkTheme);
+    const newThemeValue = !isDarkTheme;
+    setIsDarkTheme(newThemeValue);
     try {
-      await AsyncStorage.setItem("isDarkTheme", JSON.stringify(isDarkTheme)); // Store as a string
+      await AsyncStorage.setItem("isDarkTheme", JSON.stringify(newThemeValue)); // Store the updated theme value
     } catch (error) {
       console.error("Error saving theme to storage:", error);
     }

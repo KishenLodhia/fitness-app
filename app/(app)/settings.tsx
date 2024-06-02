@@ -103,7 +103,7 @@ const Settings: React.FC = () => {
       {userData && (
         <Card mode="contained" style={styles.card}>
           <View style={styles.profileSection}>
-            <Avatar.Text size={64} label={getInitials(userData.name)} />
+            {userData.name && <Avatar.Text size={64} label={getInitials(userData.name)} />}
             <Text style={styles.name}>{userData.name}</Text>
           </View>
           <Divider style={styles.divider} />
@@ -124,7 +124,7 @@ const Settings: React.FC = () => {
             />
             <TextInput
               label="Age"
-              value={updatedData?.age.toString()}
+              value={updatedData?.age?.toString()}
               onChangeText={(text) =>
                 setUpdatedData((prevData) => (prevData ? { ...prevData, age: parseInt(text) } : null))
               }
@@ -134,7 +134,7 @@ const Settings: React.FC = () => {
             />
             <TextInput
               label="Height"
-              value={updatedData?.height.toString()}
+              value={updatedData?.height?.toString()}
               onChangeText={(text) =>
                 setUpdatedData((prevData) => (prevData ? { ...prevData, height: parseFloat(text) } : null))
               }
@@ -144,7 +144,7 @@ const Settings: React.FC = () => {
             />
             <TextInput
               label="Weight"
-              value={updatedData?.weight.toString()}
+              value={updatedData?.weight?.toString()}
               onChangeText={(text) =>
                 setUpdatedData((prevData) => (prevData ? { ...prevData, weight: parseFloat(text) } : null))
               }

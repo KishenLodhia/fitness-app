@@ -1,5 +1,6 @@
+// login.tsx
 import axios from "axios";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import React, { useState, useContext } from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { Text, TextInput, Button } from "react-native-paper";
@@ -34,6 +35,12 @@ const Login: React.FC = () => {
       <Button mode="contained" onPress={handleLogin} style={styles.button}>
         Login
       </Button>
+      <Link href="/register">
+        <Button mode="text" style={styles.button}>
+          Register
+        </Button>
+      </Link>
+
       <Text variant="headlineSmall">{error}</Text>
     </View>
   );
