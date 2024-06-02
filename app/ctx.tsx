@@ -1,6 +1,7 @@
 import React from "react";
 import { useStorageState } from "./useStorageState";
 import axios from "axios";
+import { useToast } from "react-native-toast-notifications"; // Import useToast
 
 type User = {
   token: string | null;
@@ -32,6 +33,7 @@ export function useSession() {
 }
 
 export function SessionProvider(props: React.PropsWithChildren) {
+  const toast = useToast(); // Get the toast instance
   const [[isLoading, user], setSession] = useStorageState("session");
   const setUser = (user: User | null) => {
     if (user === null) {
@@ -64,16 +66,18 @@ export function SessionProvider(props: React.PropsWithChildren) {
                 id: response.data.user_id,
               };
               setUser(newUser);
-              console.log(response.data);
+              toast.show("Login successful", { type: "success" }); // Show success toast
             } else {
               throw new Error("An error occured");
             }
           } catch (error) {
             console.log(error);
+            toast.show("Login failed. Please try again.", { type: "danger" }); // Show error toast
           }
         },
         signOut: () => {
           setSession(null);
+          toast.show("Logged out successfully", { type: "success" }); // Show logout toast
         },
         user: getUser(),
         isLoading,

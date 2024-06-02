@@ -179,6 +179,7 @@ const Mood: React.FC = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
+        <Text variant="displaySmall">Mood Entries</Text>
         {moodEntries.map((data) => (
           <Card key={data.id} mode="contained" style={styles.card}>
             <View style={styles.topSection}>

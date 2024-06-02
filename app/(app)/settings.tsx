@@ -1,10 +1,12 @@
+// Settings.js
 import React, { useState, useEffect, useContext } from "react";
 import { View, StyleSheet, ScrollView, Alert, Switch } from "react-native";
 import { Text, Card, Avatar, TextInput, Button, Divider } from "react-native-paper";
 import axios from "axios";
 import { useSession } from "../ctx";
 import { useToast } from "react-native-toast-notifications";
-import { ThemeContext } from "../ThemeContext";
+import { ThemeContext } from "../ThemeContext"; // Import ThemeContext
+import { Link, useNavigation } from "expo-router";
 
 interface UserData {
   id: string;
@@ -24,6 +26,7 @@ const Settings: React.FC = () => {
   const [updatedData, setUpdatedData] = useState<UserData | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const { isDarkTheme, toggleTheme } = useContext(ThemeContext);
+  const navigation = useNavigation();
 
   useEffect(() => {
     fetchUserData();
@@ -96,6 +99,7 @@ const Settings: React.FC = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Text variant="displaySmall">Settings</Text>
       {userData && (
         <Card mode="contained" style={styles.card}>
           <View style={styles.profileSection}>
@@ -162,17 +166,20 @@ const Settings: React.FC = () => {
                 Save
               </Button>
             ) : (
-              <Button mode="outlined" onPress={handleEdit} style={styles.editButton}>
+              <Button mode="text" onPress={handleEdit} style={styles.editButton}>
                 Edit
               </Button>
             )}
           </View>
           <Divider style={styles.divider} />
           <View style={styles.settingsSection}>
-            <View>
+            <View style={styles.themeSwitchContainer}>
               <Text>Dark Mode</Text>
               <Switch value={isDarkTheme} onValueChange={toggleTheme} />
             </View>
+            <Button mode="outlined">
+              <Link href="/about">About</Link>
+            </Button>
             <Button mode="contained" onPress={handleLogout} style={styles.logoutButton}>
               Log Out
             </Button>
@@ -225,6 +232,7 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     backgroundColor: "#d9534f",
+    marginTop: 5,
   },
   themeSwitchContainer: {
     flexDirection: "row",

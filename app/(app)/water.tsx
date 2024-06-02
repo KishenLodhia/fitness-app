@@ -195,8 +195,9 @@ const WaterIntakeTracker = () => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ScrollView>
-        <View style={styles.container}>
+      <ScrollView style={styles.container}>
+        <Text variant="displaySmall">Water Intake</Text>
+        <View>
           {waterIntakeData.map((data) => (
             <Card key={data.id} mode="contained" style={styles.card}>
               <View style={styles.cardContainer}>

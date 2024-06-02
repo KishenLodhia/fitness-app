@@ -50,6 +50,8 @@ export default function Home() {
   const [dates, setDates] = useState<string[]>([]);
   const [waterIntakeAmounts, setWaterIntakeAmounts] = useState<number[]>([]);
   const [waterIntakeTimestamps, setWaterIntakeTimestamps] = useState<string[]>([]);
+  const [todayWaterIntake, setTodayWaterIntake] = useState(0); // New state for today's water intake
+  const [averageWaterIntake, setAverageWaterIntake] = useState(0); // New state for average water intake
 
   // useEffects
   useEffect(() => {
@@ -110,6 +112,20 @@ export default function Home() {
         const timestamps: string[] = responseData.map((item) =>
           new Date(item.timestamp).toLocaleDateString(undefined, { day: "2-digit", month: "2-digit" })
         );
+
+        // Calculate today's water intake
+        const todayIntake = amounts.reduce((sum, amount, index) => {
+          if (timestamps[index] === new Date().toLocaleDateString(undefined, { day: "2-digit", month: "2-digit" })) {
+            return sum + amount;
+          }
+          return sum;
+        }, 0);
+        setTodayWaterIntake(todayIntake);
+
+        // Calculate average water intake
+        const averageIntake = Math.round(amounts.reduce((a, b) => a + b, 0) / amounts.length);
+        setAverageWaterIntake(averageIntake);
+
         setWaterIntakeAmounts(amounts.reverse());
         setWaterIntakeTimestamps(timestamps.reverse());
         console.log(response.data);
@@ -143,6 +159,7 @@ export default function Home() {
   return (
     <ScrollView>
       <View style={styles.container}>
+        <Text variant="displaySmall">Dashboard</Text>
         <Text variant="labelLarge">Steps</Text>
         {steps && steps.length > 0 ? (
           <LineChart
@@ -229,83 +246,33 @@ export default function Home() {
           <Text>No data available</Text>
         )}
 
-        <Card mode="contained" style={styles.card}>
-          <Card.Title
-            title={
-              <View style={styles.numbers}>
-                <Text variant="bodyMedium">7 Day Average: </Text>
-                <Text variant="headlineLarge">{pastStepCount.toLocaleString()} Steps</Text>
-              </View>
-            }
-          />
-          <Card.Content>
-            {pastStepCount && pastStepCount < 5000 ? (
-              <Text>Go for a short walk, it will help clear your mind. You've got this 💪💪</Text>
-            ) : (
-              <Text>You've reached your target. Keep up the good work 🏅🏅</Text>
-            )}
-          </Card.Content>
-        </Card>
+        <View style={styles.numbers}>
+          <View style={styles.numberEach}>
+            <Text variant="displaySmall">{todayWaterIntake.toLocaleString()}</Text>
+            <Text variant="bodySmall">Today</Text>
+          </View>
+          <View style={styles.numberEach}>
+            <Text variant="displaySmall">{averageWaterIntake.toLocaleString()}</Text>
+            <Text variant="bodySmall">7 Day Average</Text>
+          </View>
+        </View>
 
         <Card mode="contained" style={styles.card}>
-          <Card.Content>
-            <View style={styles.titleCard}>
-              <Text variant="headlineMedium">Water:</Text>
-              <Text variant="headlineLarge">{waterIntake} cups</Text>
+          <Card.Content style={styles.cardContent}>
+            <Text variant="headlineMedium" style={styles.cardTitle}>
+              Important Information
+            </Text>
+            <View style={styles.infoSection}>
+              <Text>
+                <Text style={styles.boldText}>Mood:</Text> It's okay to have bad days. Remember to practice self-care
+                and reach out for support when needed.
+              </Text>
+              <Text>
+                <Text style={styles.boldText}>Water Intake:</Text> Staying hydrated is crucial for your health and
+                well-being. Aim for at least 8 glasses of water per day.
+              </Text>
+              {/* Add more information as needed */}
             </View>
-            <ProgressBar progress={2 / 8} color={"green"} />
-            <DataTable>
-              <DataTable.Header>
-                <DataTable.Title>Category</DataTable.Title>
-                <DataTable.Title numeric>Cups</DataTable.Title>
-              </DataTable.Header>
-
-              <DataTable.Row>
-                <DataTable.Cell>Males</DataTable.Cell>
-                <DataTable.Cell numeric>10</DataTable.Cell>
-              </DataTable.Row>
-
-              <DataTable.Row>
-                <DataTable.Cell>Females</DataTable.Cell>
-                <DataTable.Cell numeric>8</DataTable.Cell>
-              </DataTable.Row>
-
-              <DataTable.Row>
-                <DataTable.Cell>Teenagers</DataTable.Cell>
-                <DataTable.Cell numeric>6-8</DataTable.Cell>
-              </DataTable.Row>
-
-              <DataTable.Row>
-                <DataTable.Cell>Children</DataTable.Cell>
-                <DataTable.Cell numeric>4-5</DataTable.Cell>
-              </DataTable.Row>
-            </DataTable>
-            <Text>(healthdirect.gov.au)</Text>
-          </Card.Content>
-          {/* <Card.Actions>
-            <IconButton
-              icon="minus"
-              iconColor={"purple"}
-              size={30}
-              mode="outlined"
-              onPress={() => setWaterIntake(waterIntake > 0 ? waterIntake - 1 : 0)}
-            />
-            <IconButton
-              icon="plus"
-              iconColor={"purple"}
-              size={30}
-              mode="outlined"
-              onPress={() => setWaterIntake(waterIntake + 1)}
-            />
-          </Card.Actions> */}
-        </Card>
-        <Card mode="contained" style={styles.card}>
-          <Card.Content>
-            <View style={styles.titleCard}>
-              <Text variant="headlineMedium">Mood:</Text>
-              <Text variant="headlineLarge">{mood}</Text>
-            </View>
-            <Text>Your current mood is {mood}. Remember, it's okay to have bad days. Take care of yourself!</Text>
           </Card.Content>
         </Card>
       </View>
@@ -316,7 +283,6 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    width: "100%",
   },
 
   card: {
@@ -345,5 +311,19 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-evenly",
     alignItems: "center",
+  },
+
+  cardContent: {
+    padding: 10,
+  },
+  cardTitle: {
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  infoSection: {
+    marginTop: 10,
+  },
+  boldText: {
+    fontWeight: "bold",
   },
 });
