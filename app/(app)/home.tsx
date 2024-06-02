@@ -143,7 +143,7 @@ export default function Home() {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <Text variant="displayMedium">Steps</Text>
+        <Text variant="labelLarge">Steps</Text>
         {steps && steps.length > 0 ? (
           <LineChart
             data={{
@@ -192,7 +192,7 @@ export default function Home() {
           </View>
         </View>
 
-        <Text variant="displayMedium">Water Intake</Text>
+        <Text variant="labelLarge">Water Intake</Text>
         {waterIntakeAmounts && waterIntakeAmounts.length > 0 ? (
           <LineChart
             fromZero
@@ -211,7 +211,6 @@ export default function Home() {
               backgroundGradientFrom: "#2974FA", // Gradient start color
               backgroundGradientTo: "#6DD5FA", // Gradient end color
               decimalPlaces: 0,
-
               color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`, // Label text color
               labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`, // Label color
               propsForDots: {

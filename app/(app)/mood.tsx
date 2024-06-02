@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, Alert } from "react-native";
-import { Text, Card, useTheme, Badge, FAB, Portal, Modal, TextInput, Button, Chip } from "react-native-paper";
+import { Text, Card, useTheme, Badge, FAB, Portal, Modal, TextInput, Button, Chip, Divider } from "react-native-paper";
 import axios from "axios";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSession } from "../ctx";
@@ -180,20 +180,23 @@ const Mood: React.FC = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
         {moodEntries.map((data) => (
-          <Card key={data.id} mode="outlined" style={styles.card}>
-            <Card.Title
-              title={`Mood - ${new Date(data.timestamp).toLocaleDateString()}`}
-              right={() => (
-                <Badge style={{ alignSelf: "center" }}>{new Date(data.timestamp).toLocaleTimeString()}</Badge>
-              )}
-            />
-            <Card.Content>
-              <Text style={styles.moodText}>{`Mood: ${data.mood}`}</Text>
-              <Text style={styles.notesText}>{`Notes: ${data.notes || "No notes"}`}</Text>
-            </Card.Content>
+          <Card key={data.id} mode="contained" style={styles.card}>
+            <View style={styles.topSection}>
+              <Text variant="headlineMedium">{data.mood}</Text>
+              <Text variant="labelMedium">{`Date: ${new Date(data.timestamp).toLocaleDateString()}`}</Text>
+            </View>
+            <Text variant="labelSmall">Notes</Text>
+            <Text style={styles.note} variant="bodyMedium">
+              {data.notes}
+            </Text>
+
             <Card.Actions>
-              <Button onPress={() => handleEditMood(data)}>Edit</Button>
-              <Button onPress={() => handleDeleteMood(data.id)}>Delete</Button>
+              <Button mode="text" onPress={() => handleEditMood(data)}>
+                Edit
+              </Button>
+              <Button mode="text" onPress={() => handleDeleteMood(data.id)}>
+                Delete
+              </Button>
             </Card.Actions>
           </Card>
         ))}
@@ -242,6 +245,7 @@ const styles = StyleSheet.create({
   card: {
     marginBottom: 20,
     borderRadius: 10,
+    padding: 15,
   },
   moodText: {
     fontSize: 16,
@@ -283,6 +287,16 @@ const styles = StyleSheet.create({
   },
   chip: {
     margin: 4,
+  },
+  topSection: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignContent: "center",
+    alignItems: "center",
+  },
+  note: {
+    // fontStyle: "italic",
+    color: "grey",
   },
 });
 

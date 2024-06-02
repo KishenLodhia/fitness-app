@@ -199,18 +199,21 @@ const WaterIntakeTracker = () => {
         <View style={styles.container}>
           {waterIntakeData.map((data) => (
             <Card key={data.id} mode="contained" style={styles.card}>
-              <Card.Title
-                title={`${new Date(data.timestamp).toLocaleDateString()}`}
-                right={() => (
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <Text>{`Amount: ${data.amount} cups`}</Text>
-                  </View>
-                )}
-              />
-              <Card.Actions>
-                <Button onPress={() => handleEditWaterIntake(data)}>Edit</Button>
-                <Button onPress={() => handleDeleteWaterIntake(data.id)}>Delete</Button>
-              </Card.Actions>
+              <View style={styles.cardContainer}>
+                <View style={styles.topSection}>
+                  <Text variant="headlineMedium">{data.amount} Cups</Text>
+                  <Text variant="labelMedium">{`Date: ${new Date(data.timestamp).toLocaleDateString()}`}</Text>
+                </View>
+
+                <View style={styles.buttons}>
+                  <Button mode="text" onPress={() => handleEditWaterIntake(data)}>
+                    Edit
+                  </Button>
+                  <Button mode="text" onPress={() => handleDeleteWaterIntake(data.id)}>
+                    Delete
+                  </Button>
+                </View>
+              </View>
             </Card>
           ))}
         </View>
@@ -279,6 +282,20 @@ const styles = StyleSheet.create({
   amountText: {
     fontSize: 18,
     marginHorizontal: 20,
+  },
+  topSection: {
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  buttons: {
+    flexDirection: "row",
+  },
+  cardContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
 
