@@ -1,50 +1,43 @@
-# Welcome to your Expo app 👋
+# Fitness App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**Author:** Kishen Lodhia
 
-## Get started
+## Description
+---
+This fitness app is built as a hobby project and works with an API. This is built as part of the IFN666 Web and Mobile App Development Unit. 
 
-1. Install dependencies
+## Features
+Being a fitness app, it has multiple features:
+- Dashboard screen to show trends, charts, and overarching information
+- Mood screen to allow logging of different moods, including adding, modifying, and deleting.
+- Water intake allows the user to log the number of cups the user has had.
+- Profile allows the user to edit and save their details.
+- Authentication so users can see their information (Login and Registration)
+- Dark/Light theme thats persistent even in between app launches.
 
-   ```bash
-   npm install
-   ```
+## Technical Details
+- **Programming Language:** JavaScript/TypeScript
+- **Frameworks and Libraries:** React-Native, Expo
+- **Development Tools:** VS Code, Git, iOS device
+- **Version Control:** Git, GitHub
 
-2. Start the app
+## Contributing
 
-   ```bash
-    npx expo start
-   ```
+To contribute to the development of this application, follow these steps:
 
-In the output, you'll find options to open the app in a
+1. Fork the repository.
+2. Clone the forked repository to your local machine.
+3. Make changes or improvements.
+4. Commit your changes with descriptive messages.
+5. Push your changes to your forked repository.
+6. Submit a pull request for review.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Issue Reporting
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+To report any issues or bugs, please open an issue on the GitHub repository page.
 
-## Get a fresh project
+## Licence
 
-When you're ready, run:
+This project is licenced under the MIT Licence. See the LICENCE file for details.
 
-```bash
-npm run reset-project
-```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
